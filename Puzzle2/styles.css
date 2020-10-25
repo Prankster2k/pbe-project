@@ -1,0 +1,28 @@
+*{
+    font-family: sans-serif;
+}
+box, label{
+    background: #202020;
+    color: white;
+}
+
+label{
+    font-size: 20px;
+}
+
+button {
+    border-radius: 20px;
+    background: rgb(255, 59, 48);
+    transition: 0.1s;
+    border: 2px solid white;
+}
+
+button label{
+    background: none;
+    font-weight: 600;
+}
+
+button:active, button:hover {
+    background: rgb(255, 79, 68);
+    transition: 0.1s;
+}
