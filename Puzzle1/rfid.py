@@ -25,7 +25,7 @@ class Rfid:
         # If we have a card uid
         if uid is not None:
             # We use "".join(array) to create a string using a array and upper() to have uppercase
-            return "".join([hex(i) for i in uid][2:]).upper()
+            return "".join([hex(i)[2:] for i in uid]).upper()
         #If we don't have a card uid
         else:
             return False
