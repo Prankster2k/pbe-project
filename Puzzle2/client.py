@@ -1,3 +1,8 @@
+#=================
+# Jesus Vico
+# Clases principales: uidReader (Encargada de leer el uid) y LoginWindow (Encargada de renderizar la interfaz de login)
+#=================
+
 import threading
 
 import gi
@@ -6,12 +11,48 @@ from gi.repository import Gtk, GLib, GObject, Gdk
 
 from rfid import Rfid
 
-styles = "styles.css"
+styles = "styles.css" # Nombre del archivo con los estilos en CSS
+
+# Clase encargada de leer el uid
+class UIDReader():
+    
+    def __init__(self, Window):
+        self.Window = Window
+
+        self.uid = False
+        # Creamos el objeto Rfid
+        self.rf = Rfid()
+        # Creamos un thread que ejecuta la funcion uidReader, lo hacemos un demonio para que al cerrar el hilo principal este hilo tambien se cierre
+        self.uid_thread = threading.Thread(target=self.uidThread, daemon=True)
+        # Iniciamos el thread
+        self.uid_thread.start()
+
+    # Funcion encargada de crear el hilo
+    def rerunThread(self):
+        # Si el hilo que se encarga de leer el uid no existe, lo volvemos a crear
+        if self.uid_thread.is_alive() is False:
+            # Creamos un thread que ejecuta la funcion uidReader, lo hacemos un demonio para que al cerrar el hilo principal este hilo tambien se cierre
+            self.uid_thread = threading.Thread(target=self.uidThread, daemon=True)
+            # Iniciamos el thread
+            self.uid_thread.start()
+        
+    # Creamos una funcion que sera un hilo y se encargara de leer el UID
+    def uidThread(self):
+        self.uid = self.rf.read_uid()
+        print(self.uid)
+        # Para modificar el valor del label, añadir el boton y mostrar el contenido debemos utilizar la funcion GLib.idle_add() 
+        #   que nos permite modificar la interfaz grafica desde un thread auxiliar sin causar problemas
+        GLib.idle_add(self.Window.setMainLabelText, self.uid)
+        GLib.idle_add(self.Window.box.add, self.Window.ClearButton)
+        GLib.idle_add(self.Window.show_all)
 
 # Creamos la clase de la ventana de login
 class LoginWindow(Gtk.Window):
     
     def __init__(self):
+        # Creamos el objeto encargado de leer el uid
+        self.uidReader = UIDReader(self)
+
         # Definimos la ventana, su titulo y su tamaño
         Gtk.Window.__init__(self, title="Login")
         Gtk.Window.set_default_size(self, 600, 200)
@@ -32,18 +73,6 @@ class LoginWindow(Gtk.Window):
 
         # Aplicamos los estilos CSS
         self.applyStyles(styles)
-
-        #=================
-        # CREACIÓN DEL HILO QUE LEE EL UID
-        #=================
-        self.uid = False
-
-        # Creamos el objeto Rfid
-        self.rf = Rfid()
-        # Creamos un thread que ejecuta la funcion uidReader, lo hacemos un demonio para que al cerrar el hilo principal este hilo tambien se cierre
-        self.uid_thread = threading.Thread(target=self.uidReader, daemon=True)
-        # Iniciamos el thread
-        self.uid_thread.start()
 
     # Función encargada de aplicar los estilos CSS del archivo fileName
     def applyStyles(self, fileName):
@@ -70,10 +99,7 @@ class LoginWindow(Gtk.Window):
     def clearButton(self, ClearButton):
         self.MainLabel.set_text("Please, login with your university card")
         self.box.remove(ClearButton)
-        # Si el hilo que se encarga de leer el uid no existe, lo volvemos a crear
-        if self.uid_thread.is_alive() is False:
-            self.uid_thread = threading.Thread(target=self.uidReader, daemon=True)
-            self.uid_thread.start()
+        self.uidReader.rerunThread()
 
     # Creamos una funcion que sera un hilo y se encargara de leer el UID
     def uidReader(self):
@@ -87,7 +113,7 @@ class LoginWindow(Gtk.Window):
 
     # Creamos una funcion que ira dentro del GLib.idle_add() ya que necesitamos devolver False para que idle_add() no ejecute en bucle la funcion
     def setMainLabelText(self, uid):
-        self.MainLabel.set_text("uid: " + self.uid)
+        self.MainLabel.set_text("uid: " + self.uidReader.uid)
         return False
 
 if __name__ == "__main__":
