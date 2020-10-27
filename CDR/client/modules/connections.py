@@ -1,12 +1,6 @@
 import requests
-import os
 
-os.environ['NO_PROXY'] = '127.0.0.1'
+path = "http://192.168.0.20"
 
-path = "localhost"
-
-payload = {
-    "uid" : "uid",
-}
-r = requests.get(path, params=payload)
-print(r.url)
+r = requests.get(path)
+print(r.text)

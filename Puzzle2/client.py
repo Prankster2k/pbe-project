@@ -1,19 +1,22 @@
 #=================
 # Jesus Vico
-# Clases principales: uidReader (Encargada de leer el uid) y LoginWindow (Encargada de renderizar la interfaz de login)
+#
+# Clases principales: 
+#   - uidReader (Encargada de leer el uid)
+#   - LoginWindow (Encargada de renderizar la interfaz de login)
 #=================
 
 import threading
-
 import gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GLib, GObject, Gdk
-
 from rfid import Rfid
 
 styles = "styles.css" # Nombre del archivo con los estilos en CSS
 
-# Clase encargada de leer el uid
+#=================
+# CLASE SE ENCARGADA DE LEER EL UID
+#=================
 class UIDReader():
     
     def __init__(self, Window):
@@ -46,7 +49,9 @@ class UIDReader():
         GLib.idle_add(self.Window.box.add, self.Window.ClearButton)
         GLib.idle_add(self.Window.show_all)
 
-# Creamos la clase de la ventana de login
+#=================
+# CLASE SE ENCARGADA DE CREAR Y RENDERIZAR LA INTERFAZ DE LOGIN
+#=================
 class LoginWindow(Gtk.Window):
     
     def __init__(self):
