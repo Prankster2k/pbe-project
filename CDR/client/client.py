@@ -139,10 +139,4 @@ class LoginWindow(Gtk.Window):
         self.App.login()
 
 if __name__ == "__main__":
-
-    uid = "6918F9B3"
-    hostname = "http://192.168.0.20:8000"
-
-    #r = login(hostname, "6918F9B3")
-    #print(r)
     App = App()
