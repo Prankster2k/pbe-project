@@ -1,7 +1,6 @@
 import requests
 import json
 
-hostname = "http://192.168.0.20:8000"
 
 #   Le envia la query al servidor (una vez el usuario esta logeado)
 #       hostname: dirección del servidor
@@ -95,6 +94,7 @@ def getMarks(hostname, uid, subject, name, mark):
 
 if __name__ == "__main__":
     uid = "6918F9B3"
+    hostname = "http://192.168.0.20:8000"
 
     r = login(hostname, "6918F9B3")
     print(r)
