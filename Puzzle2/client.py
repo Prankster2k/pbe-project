@@ -50,7 +50,7 @@ class UIDReader():
         GLib.idle_add(self.Window.show_all)
 
 #=================
-# CLASE SE ENCARGADA DE CREAR Y RENDERIZAR LA INTERFAZ DE LOGIN
+# CLASE ENCARGADA DE CREAR Y RENDERIZAR LA INTERFAZ DE LOGIN
 #=================
 class LoginWindow(Gtk.Window):
     
@@ -62,7 +62,7 @@ class LoginWindow(Gtk.Window):
         Gtk.Window.__init__(self, title="Login")
         Gtk.Window.set_default_size(self, 600, 200)
 
-        # Creamos una caja que estara dentro de la ventana y en laque meteremos los componentes
+        # Creamos una caja que estara dentro de la ventana y en la que meteremos los componentes
         self.box = Gtk.VBox(spacing=0)
         self.add(self.box)
 
