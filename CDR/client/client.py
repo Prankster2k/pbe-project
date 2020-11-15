@@ -161,6 +161,7 @@ class MainWindow(Gtk.Window):
     # Creamos la función que se ejecuta al pulsar el boton Login
     def loginButton(self, LoginButton):
         self.LoginBox.remove(LoginButton)
+        self.remove(self.LoginBox)
         self.App.startManager()
 
     # Funcion encargada de mostrar el login invalido
@@ -183,8 +184,93 @@ class MainWindow(Gtk.Window):
         # Definimos el titulo y el tamaño de la ventana
         self.set_title("Course Manager")
         self.resize(600, 600)
-        self.remove(self.LoginBox)
 
+        # Creamos una caja que estara dentro de la ventana y en la que meteremos los componentes
+        self.AppBox = Gtk.Grid()
+        self.add(self.AppBox)
+
+        self.createMainEntry()
+        self.createEntryButton()
+
+        # Colocamos los elementos dentro de la caja y los mostramos
+        self.AppBox.attach(self.MainEntry, 0, 0, 5, 5)
+        self.AppBox.attach(self.EntryButton, 5, 0, 2, 1)
+        self.show_all()
+
+    # Creamos el entry donde hacer las busquedas
+    def createMainEntry(self):
+        self.MainEntry = Gtk.Entry()
+        self.MainEntry.set_text("/marks?")
+        self.MainEntry.set_margin_start(20)
+        self.MainEntry.set_margin_top(20)
+        self.MainEntry.set_margin_end(10)
+        self.MainEntry.set_margin_bottom(20)
+        self.MainEntry.set_property("width-request", 440)
+        self.MainEntry.set_name("main_entry") # Le añadimos la id login_button para definir sus estilos en el CSS
+
+    # Creamos el boton de busqueda
+    def createEntryButton(self):
+        self.EntryButton = Gtk.Button(label="Search")
+        self.EntryButton.set_margin_start(10)
+        self.EntryButton.set_margin_top(22)
+        self.EntryButton.set_margin_end(20)
+        self.EntryButton.set_margin_bottom(20)
+        self.EntryButton.set_property("width-request", 100)
+        self.EntryButton.set_name("entry_button") # Le añadimos la id login_button para definir sus estilos en el CSS
+        self.EntryButton.connect("clicked", self.entryButton) # Al hacer click sobre el boton ejecutamos la función loginButton
+
+    # Hacemos la petición al servidor y creamos la tabla con los datos recividos
+    def entryButton(self, EntryButton):
+        text = self.MainEntry.get_text()
+        data_json = rawQuery(hostname, self.App.uid, text)
+        data = data_json.json()
+        print(data)
+        self.createMainTable(data)
+
+    # Crea la tabla de datos con el numero de filas y columnas especifico
+    def createMainTable(self, data):
+        # Primero obtenemos el numero de filas y columnas de la tabla
+        columns = self.getTableColumns(data)
+        rows = self.getTableRows(data)
+
+        # Creamos la tabla
+        self.MainTable = Gtk.Table(n_rows=rows, n_columns=columns, homogeneous=False)
+
+        # Obtenemos las keys que son los valores de la primera fila
+        i = 0
+        rows = rows
+        columns = columns
+        table = [[0 for x in range(rows)] for y in range(columns)]
+        for key in data[0]:
+            table[0][i] = key
+            i = i + 1
+
+        # Obtenemos los valores de las demás filas
+        i = 0
+        j = 1
+        for d in data:
+            for key in d.keys():
+                table[j][i] = d[key]
+                i = i + 1
+            i = 0
+            j = j + 1
+
+        for i in range(rows): 
+            for j in range(columns): 
+                print(table[i][j], end = " ") 
+            print() 
+
+
+    # Devuelve el numero de columnas que tendra la tabla de datos
+    def getTableColumns(self, json):
+        i = 0
+        for key in json[0].keys():
+            i = i + 1
+        return i
+        
+    # Devuelve el numero de filas que tendra la tabla de datos
+    def getTableRows(self, json):
+        return len(json) + 1
 
 if __name__ == "__main__":
     App = App()
