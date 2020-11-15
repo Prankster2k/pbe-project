@@ -101,7 +101,7 @@ if __name__ == "__main__":
 
     #r = getMarks(hostname, uid, "RP", "Practica 1", "9")
     #r = rawQuery(hostname, uid, "/marks?subject=PSAVC")
-    r = rawQuery(hostname, uid, )
+    r = rawQuery(hostname, uid, "")
     result = r.json()
     print(result)
 

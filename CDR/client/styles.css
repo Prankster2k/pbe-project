@@ -1,5 +1,6 @@
 *{
     font-family: sans-serif;
+    background: #202020;
 }
 box, label{
     background: #202020;
@@ -10,19 +11,32 @@ label{
     font-size: 20px;
 }
 
-button {
-    border-radius: 20px;
-    background: rgb(255, 59, 48);
-    transition: 0.1s;
-    border: 2px solid white;
-}
 
 button label{
     background: none;
     font-weight: 600;
 }
 
-button:active, button:hover {
+#clear_button {
+    border-radius: 20px;
+    background: rgb(255, 59, 48);
+    transition: 0.1s;
+    border: 2px solid white;
+}
+
+#clear_button:active, #clear_button:hover {
     background: rgb(255, 79, 68);
+    transition: 0.1s;
+}
+
+#login_button {
+    border-radius: 20px;
+    background: rgb(52, 199, 89);
+    transition: 0.1s;
+    border: 2px solid white;
+}
+
+#login_button:active, #login_button:hover {
+    background: rgb(72, 219, 109);
     transition: 0.1s;
 }
