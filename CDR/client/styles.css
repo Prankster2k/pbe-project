@@ -69,3 +69,7 @@ button label{
     background: rgb(10, 122, 255);
     transition: 0.3s;
 }
+
+#main_table{
+    border: 3px solid white;
+}

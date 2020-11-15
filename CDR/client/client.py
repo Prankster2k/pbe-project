@@ -195,6 +195,7 @@ class MainWindow(Gtk.Window):
         # Colocamos los elementos dentro de la caja y los mostramos
         self.AppBox.attach(self.MainEntry, 0, 0, 5, 5)
         self.AppBox.attach(self.EntryButton, 5, 0, 2, 1)
+        self.mainTableExists = False
         self.show_all()
 
     # Creamos el entry donde hacer las busquedas
@@ -221,10 +222,11 @@ class MainWindow(Gtk.Window):
 
     # Hacemos la petición al servidor y creamos la tabla con los datos recividos
     def entryButton(self, EntryButton):
+        if(self.mainTableExists):
+            self.AppBox.remove(self.MainTable)
         text = self.MainEntry.get_text()
         data_json = rawQuery(hostname, self.App.uid, text)
         data = data_json.json()
-        print(data)
         self.createMainTable(data)
 
     # Crea la tabla de datos con el numero de filas y columnas especifico
@@ -235,31 +237,30 @@ class MainWindow(Gtk.Window):
 
         # Creamos la tabla
         self.MainTable = Gtk.Table(n_rows=rows, n_columns=columns, homogeneous=False)
-
-        # Obtenemos las keys que son los valores de la primera fila
-        i = 0
-        rows = rows
-        columns = columns
-        table = [[0 for x in range(rows)] for y in range(columns)]
-        for key in data[0]:
-            table[0][i] = key
-            i = i + 1
-
-        # Obtenemos los valores de las demás filas
-        i = 0
-        j = 1
-        for d in data:
-            for key in d.keys():
-                table[j][i] = d[key]
-                i = i + 1
-            i = 0
-            j = j + 1
-
+        self.mainTableExists = True
+        # Obtenemos la matriz de la data colocada
+        table = self.getDataMatrix(data, rows, columns)
+        
         for i in range(rows): 
             for j in range(columns): 
                 print(table[i][j], end = " ") 
-            print() 
+            print()
 
+        # Hacemos que sea una matriz de labels en vez de strings
+        for i in range(rows): 
+            for j in range(columns): 
+                table[i][j] = Gtk.Label(label=table[i][j])
+                self.MainTable.attach(table[i][j], j, j+1, i, i+1)
+
+        self.MainTable.set_margin_start(10)
+        self.MainTable.set_margin_top(22)
+        self.MainTable.set_margin_end(20)
+        self.MainTable.set_margin_bottom(20)
+        self.MainTable.set_property("width-request", 460)
+        self.MainTable.set_row_spacings(10)
+        self.AppBox.attach(self.MainTable, 1, 300, 5, 1)
+        self.MainTable.set_name("main_table")
+        self.show_all()
 
     # Devuelve el numero de columnas que tendra la tabla de datos
     def getTableColumns(self, json):
@@ -271,6 +272,26 @@ class MainWindow(Gtk.Window):
     # Devuelve el numero de filas que tendra la tabla de datos
     def getTableRows(self, json):
         return len(json) + 1
+
+    def getDataMatrix(self, data, rows, columns):
+        # Obtenemos las keys que son los valores de la primera fila 
+        i = 0
+        table = [[0 for x in range(columns)] for y in range(rows)]
+        for key in data[0]:
+            table[0][i] = key
+            i = i + 1
+
+        # Obtenemos los valores de las demás filas
+        j = 1
+        for d in data:
+            i = 0
+            for key in d.keys():
+                table[j][i] = d[key]
+                i = i + 1
+            j = j + 1
+
+        # Devolvemos la tabla
+        return table
 
 if __name__ == "__main__":
     App = App()
