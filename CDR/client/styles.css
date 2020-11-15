@@ -1,6 +1,7 @@
 *{
     font-family: sans-serif;
     background: #202020;
+    color: white;
 }
 box, label{
     background: #202020;
@@ -39,4 +40,32 @@ button label{
 #login_button:active, #login_button:hover {
     background: rgb(72, 219, 109);
     transition: 0.1s;
+}
+
+#main_entry{
+    font-weight: 600;
+    font-size: 20px;
+    border-radius: 10px;
+    background: #303030;
+    transition: 0.1s;
+    border: 1px solid white;
+}
+
+#main_entry:focus{
+    border: 3px solid rgb(10, 122, 255);
+    transition: 0.1s;
+}
+
+#entry_button{
+    background: #505050;
+    font-weight: 600;
+    font-size: 20px;
+    border: none;
+    border-radius: 10px;
+    transition: 0.3s;
+}
+
+#entry_button:active, #entry_button:hover{
+    background: rgb(10, 122, 255);
+    transition: 0.3s;
 }
