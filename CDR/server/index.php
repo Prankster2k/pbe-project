@@ -65,9 +65,10 @@ function returnTasks(){
 
     # Obtenemos la tabla enviando la consulta al servidor
     $result = $conn->query($sql);
-    # Pasamos la tabla SQL a JSON para enviarla
-    $tableJSON = tableToJSON($result);
-    echo $tableJSON;
+    # Pasamos la tabla SQL a array
+    $tableArray = tableToArray($result);
+    # Codificamos la array como JSON y la enviamos
+    echo json_encode($tableArray);
 }
 
 function returnTimetables(){
@@ -94,7 +95,7 @@ function returnTimetables(){
     # Obtenemos la primera tabla enviando la consulta al servidor
     $result = $conn->query($sql);
     # Pasamos la primera tabla SQL a JSON
-    $tableJSON1 = tableToJSON($result);
+    $tableArray1 = tableToArray($result);
 
     # Creamos una string con la consulta que vamos a hacer la base de datos
     # Ahora pedimos las clases restantes
@@ -106,11 +107,11 @@ function returnTimetables(){
     # Obtenemos la segunda tabla enviando la consulta al servidor
     $result = $conn->query($sql);
     # Pasamos la segunda tabla SQL a JSON
-    $tableJSON2 = tableToJSON($result);
+    $tableArray2 = tableToArray($result);
 
     # Fusionamos las dos tablas para conseguir el resultado que buscamos
-    $tableJSON = $tableJSON1 . $tableJSON2;
-    echo $tableJSON;
+    $tableJSON = array_merge($tableArray1, $tableArray2);
+    echo json_encode($tableJSON);
 }
 
 
@@ -138,9 +139,10 @@ function returnMarks(){
             ";
     # Obtenemos la tabla enviando la consulta al servidor
     $result = $conn->query($sql);
-    # Pasamos la tabla SQL a JSON para enviarla
-    $tableJSON = tableToJSON($result);
-    echo $tableJSON;
+    # Pasamos la tabla SQL a array
+    $tableArray = tableToArray($result);
+    # Codificamos la array como JSON y la enviamos
+    echo json_encode($tableArray);
 }
 
 
@@ -148,15 +150,15 @@ function returnMarks(){
 #       $table: tabla SQL que queremos pasar a JSON
 #
 #   Retorna la tabla en tipo JSON
-function tableToJSON($table){
+function tableToArray($table){
     $array = array();
     # Metemos la tabla SQL en una array
     while($row = mysqli_fetch_assoc($table))
     {
         $array[] = $row;
     }
-    # Pasamos de array a JSON y lo devolvemos
-    return json_encode($array);
+    # Devolvemos la array que mas tarde deberemos pasar a JSON
+    return $array;
 }
 
 
