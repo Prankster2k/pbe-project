@@ -189,21 +189,29 @@ class MainWindow(Gtk.Window):
         self.AppBox = Gtk.Grid()
         self.add(self.AppBox)
 
+        self.createNameLabel()
         self.createMainEntry()
         self.createEntryButton()
 
         # Colocamos los elementos dentro de la caja y los mostramos
-        self.AppBox.attach(self.MainEntry, 0, 0, 5, 5)
-        self.AppBox.attach(self.EntryButton, 5, 0, 2, 1)
+        self.AppBox.attach(self.NameLabel, 0, 0, 2, 1)
+        self.AppBox.attach(self.MainEntry, 0, 1, 1, 1)
+        self.AppBox.attach(self.EntryButton, 1, 1, 1, 1)
         self.mainTableExists = False
         self.show_all()
+
+    def createNameLabel(self):
+        text = "Welcome " + self.App.name
+        self.NameLabel = Gtk.Label(label=text)
+        self.NameLabel.set_margin_top(10)
+        self.NameLabel.set_margin_bottom(10)
 
     # Creamos el entry donde hacer las busquedas
     def createMainEntry(self):
         self.MainEntry = Gtk.Entry()
         self.MainEntry.set_text("/marks?")
         self.MainEntry.set_margin_start(20)
-        self.MainEntry.set_margin_top(20)
+        self.MainEntry.set_margin_top(10)
         self.MainEntry.set_margin_end(10)
         self.MainEntry.set_margin_bottom(20)
         self.MainEntry.set_property("width-request", 440)
@@ -213,7 +221,7 @@ class MainWindow(Gtk.Window):
     def createEntryButton(self):
         self.EntryButton = Gtk.Button(label="Search")
         self.EntryButton.set_margin_start(10)
-        self.EntryButton.set_margin_top(22)
+        self.EntryButton.set_margin_top(12)
         self.EntryButton.set_margin_end(20)
         self.EntryButton.set_margin_bottom(20)
         self.EntryButton.set_property("width-request", 100)
@@ -250,6 +258,13 @@ class MainWindow(Gtk.Window):
         for i in range(rows): 
             for j in range(columns): 
                 table[i][j] = Gtk.Label(label=table[i][j])
+                if(i==0):
+                    style_context = table[i][j].get_style_context()
+                    style_context.add_class("title")
+                    table[i][j].set_text(table[i][j].get_text().upper())
+                if(i%2==0 and i!=0):
+                    style_context = table[i][j].get_style_context()
+                    style_context.add_class("second_column")
                 self.MainTable.attach(table[i][j], j, j+1, i, i+1)
 
         self.MainTable.set_margin_start(10)
@@ -258,7 +273,7 @@ class MainWindow(Gtk.Window):
         self.MainTable.set_margin_bottom(20)
         self.MainTable.set_property("width-request", 460)
         self.MainTable.set_row_spacings(10)
-        self.AppBox.attach(self.MainTable, 1, 300, 5, 1)
+        self.AppBox.attach(self.MainTable, 0, 2, 2, 1)
         self.MainTable.set_name("main_table")
         self.show_all()
 

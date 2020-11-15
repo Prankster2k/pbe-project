@@ -73,3 +73,14 @@ button label{
 #main_table{
     border: 3px solid white;
 }
+
+.title{
+    font-weight: 700;
+    font-size: 25px;
+    border-left: 1px solid #404040;
+    border-right: 1px solid #404040;
+}
+
+.second_column{
+    background: #303030;
+}
