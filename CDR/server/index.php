@@ -93,14 +93,14 @@ function returnTimetables(){
     $subject = valueOfArg("subject");
     $room = valueOfArg("room");
 
+    # Hacemos la consexión con la base de datos mySQL
+    $conn = new mysqli("127.0.0.1", "root", "password123", "course-manager");
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    }
+
     # Si tenemos un dia especifico enviamos unicamente los horarios de ese dia
     if($day != ""){
-        # Hacemos la consexión con la base de datos mySQL
-        $conn = new mysqli("127.0.0.1", "root", "password123", "course-manager");
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
-
         # Creamos una string con la consulta que vamos a hacer la base de datos
         $sql = "SELECT *
             FROM timetables
@@ -115,15 +115,8 @@ function returnTimetables(){
         $result = $conn->query($sql);
         # Pasamos la tabla SQL a array
         $tableArray = tableToArray($result);
-        # Codificamos la array como JSON y la enviamos
-        echo json_encode($tableArray);
-    } else { # Si no especificamos el dia devolvemos el horario de toda la semana
-        # Hacemos la consexión con la base de datos mySQL
-        $conn = new mysqli("127.0.0.1", "root", "password123", "course-manager");
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
 
+    } else { # Si no especificamos el dia devolvemos el horario de toda la semana
         # Creamos una string con la consulta que vamos a hacer la base de datos
         # Primero pedimos las clases desde hoy al final de la semana
         $sql = "SELECT *
@@ -157,8 +150,11 @@ function returnTimetables(){
 
         # Fusionamos las dos tablas para conseguir el resultado que buscamos
         $tableJSON = array_merge($tableArray1, $tableArray2);
-        echo json_encode($tableJSON);
+
     }
+    
+    # Codificamos la array como JSON y la enviamos
+    echo json_encode($tableArray);
 }
 
 
