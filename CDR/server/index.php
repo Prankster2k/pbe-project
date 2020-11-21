@@ -29,6 +29,7 @@ function login(){
         if ($conn->connect_error) {
             die("Connection failed: " . $conn->connect_error);
         }
+        
         # Hacemos la peticion de un nombre asociado al uid
         $sql = "SELECT name FROM users WHERE student_uid = '{$uid}'";
         $result = $conn->query($sql);
@@ -218,7 +219,7 @@ function tableToArray($table){
 #   Función encargada de obtener el valor de un argumento de una petición GET
 #       $argument: argumento del que queremos obtener el valor
 #
-#   Returna el valor del argumento si existe y si no retorna "" (String vacio)
+#   Retorna el valor del argumento si existe y si no retorna "" (String vacio)
 function valueOfArg($argument){
     if(isset($_GET["{$argument}"])){
         return $_GET["{$argument}"];
@@ -227,6 +228,11 @@ function valueOfArg($argument){
     }
 }
 
+
+#   Funcion encargada de hacer consultas a la base de datos
+#       $sql: String con la consulta que vamos a hacer a la base de datos
+#
+#   Retorna la el resultado de la consulta como array
 function obtainTableArray($sql){
     # Hacemos la consexión con la base de datos mySQL
     $conn = new mysqli("127.0.0.1", "root", "password123", "course-manager");
