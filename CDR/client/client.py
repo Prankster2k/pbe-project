@@ -209,7 +209,7 @@ class MainWindow(Gtk.Window):
     # Creamos el entry donde hacer las busquedas
     def createMainEntry(self):
         self.MainEntry = Gtk.Entry()
-        self.MainEntry.set_text("/marks?")
+        self.MainEntry.set_placeholder_text("Search...")
         self.MainEntry.set_margin_start(20)
         self.MainEntry.set_margin_top(10)
         self.MainEntry.set_margin_end(10)
