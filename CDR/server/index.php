@@ -30,7 +30,7 @@ function login(){
         $uid = valueOfArg("uid");
 
         # Nos conectamos a la base de datos course-manager
-        global $$db_hostname, $db_username, $db_password, $db_name;
+        global $db_hostname, $db_username, $db_password, $db_name;
         
         $conn = new mysqli($db_hostname, $db_username, $db_password, $db_name);
         if ($conn->connect_error) {
