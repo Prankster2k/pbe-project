@@ -28,7 +28,7 @@ function login(){
         $conn = new mysqli("127.0.0.1", "root", "password123", "course-manager");
         if ($conn->connect_error) {
             die("Connection failed: " . $conn->connect_error);
-        } 
+        }
         # Hacemos la peticion de un nombre asociado al uid
         $sql = "SELECT name FROM users WHERE student_uid = '{$uid}'";
         $result = $conn->query($sql);
@@ -49,12 +49,6 @@ function returnTasks(){
     $date = valueOfArg("date");
     $subject = valueOfArg("subject");
     $name = valueOfArg("name");
-
-    # Hacemos la consexión con la base de datos mySQL
-    $conn = new mysqli("127.0.0.1", "root", "password123", "course-manager");
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
 
     # Si hay una fecha especifica
     if($date != ""){
@@ -77,10 +71,9 @@ function returnTasks(){
         ";
     }
 
-    # Obtenemos la tabla enviando la consulta al servidor
-    $result = $conn->query($sql);
-    # Pasamos la tabla SQL a array
-    $tableArray = tableToArray($result);
+    # Obtenemos la tabla como array haciendo una consulta a la base de datos
+    $tableArray = obtainTableArray($sql);
+
     # Codificamos la array como JSON y la enviamos
     echo json_encode($tableArray);
 }
@@ -93,33 +86,48 @@ function returnTimetables(){
     $subject = valueOfArg("subject");
     $room = valueOfArg("room");
 
-    # Hacemos la consexión con la base de datos mySQL
-    $conn = new mysqli("127.0.0.1", "root", "password123", "course-manager");
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
-
     # Si tenemos un dia especifico enviamos unicamente los horarios de ese dia
     if($day != ""){
         # Creamos una string con la consulta que vamos a hacer la base de datos
-        $sql = "SELECT *
-            FROM timetables
-            WHERE (day = '{$day}')
-            AND (subject LIKE '{$subject}%')
-            AND (hour LIKE '%{$hour}%')
-            AND (room LIKE '{$room}%')
-            ORDER BY day, hour ASC;
+        $sql = "SELECT
+                    CASE day
+                        WHEN 0 THEN 'Sunday'
+                        WHEN 1 THEN 'Monday'
+                        WHEN 2 THEN 'Tuesday'
+                        WHEN 3 THEN 'Wednesday'
+                        WHEN 4 THEN 'Thursday'
+                        WHEN 5 THEN 'Friday'
+                        WHEN 6 THEN 'Saturday'
+                        ELSE ''
+                    END AS Day_Name,
+                    hour, subject, room
+                FROM timetables
+                WHERE (day = '{$day}')
+                AND (subject LIKE '{$subject}%')
+                AND (hour LIKE '%{$hour}%')
+                AND (room LIKE '{$room}%')
+                ORDER BY day, hour ASC;
         ";
 
-        # Obtenemos la tabla enviando la consulta al servidor
-        $result = $conn->query($sql);
-        # Pasamos la tabla SQL a array
-        $tableArray = tableToArray($result);
+
+        # Obtenemos la tabla como array haciendo una consulta a la base de datos
+        $tableArray = obtainTableArray($sql);
 
     } else { # Si no especificamos el dia devolvemos el horario de toda la semana
         # Creamos una string con la consulta que vamos a hacer la base de datos
         # Primero pedimos las clases desde hoy al final de la semana
-        $sql = "SELECT *
+        $sql = "SELECT
+                    CASE day
+                        WHEN 0 THEN 'Sunday'
+                        WHEN 1 THEN 'Monday'
+                        WHEN 2 THEN 'Tuesday'
+                        WHEN 3 THEN 'Wednesday'
+                        WHEN 4 THEN 'Thursday'
+                        WHEN 5 THEN 'Friday'
+                        WHEN 6 THEN 'Saturday'
+                        ELSE ''
+                    END AS Day_Name,
+                    hour, subject, room
                 FROM timetables
                 WHERE (day >= DAYOFWEEK(NOW()))
                 AND (subject LIKE '{$subject}%')
@@ -128,14 +136,23 @@ function returnTimetables(){
                 ORDER BY day, hour ASC;
         ";
 
-        # Obtenemos la primera tabla enviando la consulta al servidor
-        $result = $conn->query($sql);
-        # Pasamos la primera tabla SQL a JSON
-        $tableArray1 = tableToArray($result);
+        # Obtenemos la tabla 1 como array haciendo una consulta a la base de datos
+        $tableArray1 = obtainTableArray($sql);
 
         # Creamos una string con la consulta que vamos a hacer la base de datos
         # Ahora pedimos las clases restantes
-        $sql = "SELECT *
+        $sql = "SELECT
+                    CASE day
+                        WHEN 0 THEN 'Sunday'
+                        WHEN 1 THEN 'Monday'
+                        WHEN 2 THEN 'Tuesday'
+                        WHEN 3 THEN 'Wednesday'
+                        WHEN 4 THEN 'Thursday'
+                        WHEN 5 THEN 'Friday'
+                        WHEN 6 THEN 'Saturday'
+                        ELSE ''
+                    END AS Day_Name,
+                    hour, subject, room
                 FROM timetables
                 WHERE (day < DAYOFWEEK(NOW()))
                 AND (subject LIKE '{$subject}%')
@@ -143,16 +160,15 @@ function returnTimetables(){
                 AND (room LIKE '{$room}%')
                 ORDER BY day, hour ASC;
         ";
-        # Obtenemos la segunda tabla enviando la consulta al servidor
-        $result = $conn->query($sql);
-        # Pasamos la segunda tabla SQL a JSON
-        $tableArray2 = tableToArray($result);
+        
+        # Obtenemos la tabla 2 como array haciendo una consulta a la base de datos
+        $tableArray2 = obtainTableArray($sql);
 
         # Fusionamos las dos tablas para conseguir el resultado que buscamos
-        $tableJSON = array_merge($tableArray1, $tableArray2);
+        $tableArray = array_merge($tableArray1, $tableArray2);
 
     }
-    
+
     # Codificamos la array como JSON y la enviamos
     echo json_encode($tableArray);
 }
@@ -165,14 +181,8 @@ function returnMarks(){
     $name = valueOfArg("name");
     $mark = valueOfArg("mark");
 
-    # Hacemos la consexión con la base de datos mySQL
-    $conn = new mysqli("127.0.0.1", "root", "password123", "course-manager");
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
-
     # Creamos una string con la consulta que vamos a hacer la base de datos
-    $sql = "SELECT * 
+    $sql = "SELECT subject, name, mark 
             FROM marks
             WHERE (student_uid = '{$uid}')
             AND (subject LIKE '{$subject}%')
@@ -180,10 +190,10 @@ function returnMarks(){
             AND (mark LIKE '{$mark}%')
             ORDER BY subject
             ";
-    # Obtenemos la tabla enviando la consulta al servidor
-    $result = $conn->query($sql);
-    # Pasamos la tabla SQL a array
-    $tableArray = tableToArray($result);
+
+    # Obtenemos la tabla como array haciendo una consulta a la base de datos
+    $tableArray = obtainTableArray($sql);
+
     # Codificamos la array como JSON y la enviamos
     echo json_encode($tableArray);
 }
@@ -215,5 +225,22 @@ function valueOfArg($argument){
     } else {
         return "";
     }
+}
+
+function obtainTableArray($sql){
+    # Hacemos la consexión con la base de datos mySQL
+    $conn = new mysqli("127.0.0.1", "root", "password123", "course-manager");
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    }
+
+    # Obtenemos la tabla enviando la consulta al servidor
+    $result = $conn->query($sql);
+
+    # Pasamos la tabla SQL a array
+    $tableArray = tableToArray($result);
+
+    # Devolvemos el resultado
+    return $tableArray;
 }
 ?>
