@@ -255,6 +255,9 @@ class MainWindow(Gtk.Window):
         if(self.mainTableExists):
             self.AppBox.remove(self.MainTable)
         text = self.MainEntry.get_text()
+        # self.App.lcd.clear()
+        # self.App.lec.display_string("Atlas", 2)
+        # self.App.lcd.display_string(text.split('?')[0], 3)
         data_json = rawQuery(hostname, self.App.uid, text)
         data = data_json.json()
         self.createMainTable(data)
