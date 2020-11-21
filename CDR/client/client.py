@@ -216,6 +216,7 @@ class MainWindow(Gtk.Window):
         self.MainEntry.set_margin_bottom(20)
         self.MainEntry.set_property("width-request", 440)
         self.MainEntry.set_name("main_entry") # Le añadimos la id login_button para definir sus estilos en el CSS
+        self.MainEntry.connect("activate", self.entryButton)
 
     # Creamos el boton de busqueda
     def createEntryButton(self):
@@ -272,7 +273,7 @@ class MainWindow(Gtk.Window):
         self.MainTable.set_margin_end(20)
         self.MainTable.set_margin_bottom(20)
         self.MainTable.set_property("width-request", 460)
-        self.MainTable.set_row_spacings(10)
+        #self.MainTable.set_row_spacings(10)
         self.AppBox.attach(self.MainTable, 0, 2, 2, 1)
         self.MainTable.set_name("main_table")
         self.show_all()
