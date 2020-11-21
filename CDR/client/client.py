@@ -4,6 +4,7 @@ gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, GLib, GObject, Gdk
 from rfid import Rfid
 from connections import *
+#from lcd_lib import lcd
 
 styles = "styles.css" # Nombre del archivo con los estilos en CSS
 hostname = "http://192.168.0.20:8000"
@@ -17,6 +18,7 @@ class App():
     def __init__(self):
         self.uid = False
         self.name = False
+        # self.lcd = lcd()
 
         # Creamos la clase para loguearse y la ventana grafica de login y el manager
         self.Login = Login(self)
@@ -33,11 +35,16 @@ class App():
     def validLogin(self):
         text = "Welcome " + self.name
         print(text)
+        # self.lcd.clear()
+        # self.lcd.display_string("Welcome...", 2)
+        # self.lcd.display_string(self.name, 3)
         GLib.idle_add(self.MainWindow.displayValidLogin, text)
 
     def invalidLogin(self):
         text = "Invalid login"
         print(text)
+        # self.lcd.clear()
+        # self.lcd.display_string(text, 2)
         GLib.idle_add(self.MainWindow.displayInvalidLogin, text)
 
     def startManager(self):
@@ -64,6 +71,8 @@ class Login():
 
     def loginThread(self):
         print("Introduce tu tarjeta")
+        # self.App.lcd.clear()
+        # self.App.lcd.display_string("Introduce tu tarjeta...", 2)
         self.App.uid = self.rf.read_uid()
         print(self.App.uid)
         self.App.name = login(hostname, self.App.uid)
@@ -122,6 +131,11 @@ class MainWindow(Gtk.Window):
         self.LoginMainLabel = Gtk.Label(label="Please, login with your university card")
         self.LoginMainLabel.width_chars = 100
 
+        # Imprimimos la informacion en el LCD
+        # self.App.lc.clear()
+        # self.App.lcd.display_string("Please, login with", 2)
+        # self.App.lcd.display_string("your university card", 3)
+
         # Creamos el boton de clear y el boton de login les damos diferentes parametros
         self.createClearButton()
         self.createLoginButton()
@@ -145,6 +159,9 @@ class MainWindow(Gtk.Window):
     # Creamos la función que se ejecuta al pulsar el boton Clear
     def clearButton(self, ClearButton):
         self.LoginMainLabel.set_text("Please, login with your university card")
+        # self.App.lcd.clear()
+        # self.App.lcd.display_string("Please, login with", 2)
+        # self.App.lcd.display_string("your university card", 3)
         self.LoginBox.remove(ClearButton)
         self.App.login()
     
@@ -184,6 +201,10 @@ class MainWindow(Gtk.Window):
         # Definimos el titulo y el tamaño de la ventana
         self.set_title("Course Manager")
         self.resize(600, 600)
+
+        # Imprimimos valores en la LCD
+        # self.App.lcd.clear()
+        # self.App.lcd.display_string("Course Manager", 2)
 
         # Creamos una caja que estara dentro de la ventana y en la que meteremos los componentes
         self.AppBox = Gtk.Grid()
@@ -234,6 +255,9 @@ class MainWindow(Gtk.Window):
         if(self.mainTableExists):
             self.AppBox.remove(self.MainTable)
         text = self.MainEntry.get_text()
+        # self.App.lcd.clear()
+        # self.App.lec.display_string("Atlas", 2)
+        # self.App.lcd.display_string(text.split('?')[0], 3)
         data_json = rawQuery(hostname, self.App.uid, text)
         data = data_json.json()
         self.createMainTable(data)
