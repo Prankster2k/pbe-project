@@ -12,7 +12,7 @@ def rawQuery(hostname, uid, query):
     payload = {
         "uid": uid
     }
-    r = requests.get(hostname + query, params=payload)
+    r = requests.get(hostname + "/" + query, params=payload)
     return r
 
 

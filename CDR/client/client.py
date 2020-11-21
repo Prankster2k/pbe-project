@@ -209,13 +209,14 @@ class MainWindow(Gtk.Window):
     # Creamos el entry donde hacer las busquedas
     def createMainEntry(self):
         self.MainEntry = Gtk.Entry()
-        self.MainEntry.set_text("/marks?")
+        self.MainEntry.set_placeholder_text("Search...")
         self.MainEntry.set_margin_start(20)
         self.MainEntry.set_margin_top(10)
         self.MainEntry.set_margin_end(10)
         self.MainEntry.set_margin_bottom(20)
         self.MainEntry.set_property("width-request", 440)
         self.MainEntry.set_name("main_entry") # Le añadimos la id login_button para definir sus estilos en el CSS
+        self.MainEntry.connect("activate", self.entryButton)
 
     # Creamos el boton de busqueda
     def createEntryButton(self):
@@ -272,7 +273,7 @@ class MainWindow(Gtk.Window):
         self.MainTable.set_margin_end(20)
         self.MainTable.set_margin_bottom(20)
         self.MainTable.set_property("width-request", 460)
-        self.MainTable.set_row_spacings(10)
+        #self.MainTable.set_row_spacings(10)
         self.AppBox.attach(self.MainTable, 0, 2, 2, 1)
         self.MainTable.set_name("main_table")
         self.show_all()
