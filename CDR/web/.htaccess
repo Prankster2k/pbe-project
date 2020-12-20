@@ -1,0 +1,14 @@
+
+# HTID:16217935: DO NOT REMOVE OR MODIFY THIS LINE AND THE LINES BELOW
+php_value display_errors 1
+# DO NOT REMOVE OR MODIFY THIS LINE AND THE LINES ABOVE HTID:16217935:
+
+# La pagina principal sera home.html
+DirectoryIndex home.html
+
+# Si no encuentra el path indicado en el url entramos en index.php
+FallbackResource /index.php
+
+
+Header set Access-Control-Allow-Origin "*"
+
