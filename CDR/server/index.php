@@ -1,13 +1,20 @@
 <?php
 # Definimos los parametros de la base de datos
-$db_hostname = "127.0.0.1";
-$db_username = "root";
-$db_password = "password123";
-$db_name = "course-manager";
+$db_hostname = "localhost";
+$db_username = "id15674561_root";
+$db_password = "Password12345.";
+$db_name = "id15674561_coursemanager";
+
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
+
 
 switch(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)){
     case "/login":
         login();
+        break;
+    case "/loginuser":
+        loginUser();
         break;
     case "/tasks": 
         returnTasks();
@@ -52,6 +59,26 @@ function login(){
         } else {
             echo "false";
         }
+    }
+}
+
+# Igual al login pero iniciamos sesion utilizando username y password en vez de un UID
+function loginUser(){
+    $username = valueOfArg("username");
+    $password = valueOfArg("password");
+
+    if($password != "" && $username != ""){
+
+        # Hacemos la peticion de un nombre asociado al uid
+        $sql = "SELECT name, student_uid 
+                FROM users 
+                WHERE username = '{$username}'
+                AND password = '{$password}'
+                ";
+
+        $tableArray = obtainTableArray($sql);
+        
+        echo json_encode($tableArray);
     }
 }
 
